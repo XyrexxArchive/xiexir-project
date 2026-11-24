@@ -77,7 +77,7 @@ class DB {
   }
 
   upsertChat(jid, name = '', isGroup = false) {
-    this.sqlite.prepare('INSERT INTO chats (jid, name, is_group, last_chat) VALUES (?, ?, ?, ?) ON CONFLICT (jid) DO UPDATE SET name = excluded.name, is_group = excluded.is_group, last_chat = excluded.last_chat').run(String(jid), String(name || ''), isGroup ? 1 : 0, Date.now())
+    this.sqlite.prepare('INSERT INTO chats (jid, name, is_group, last_chat) VALUES (?, ?, ?) ON CONFLICT (jid) DO UPDATE SET name = excluded.name, is_group = excluded.is_group, last_chat = excluded.last_chat').run(String(jid), String(name || ''), isGroup ? 1 : 0, Date.now())
   }
 
   allChats() {
@@ -89,7 +89,7 @@ class DB {
   }
 
   upsertGroup(jid, name = '') {
-    this.sqlite.prepare('INSERT INTO groups (jid, name) VALUES (?, ?) ON CONFLICT (jid) DO UPDATE SET name = excluded.name').run(String(jid), String(name || ''))
+    this.sqlite.prepare('INSERT INTO groups (jid, name) VALUES (?, ?, ?) ON CONFLICT (jid) DO UPDATE SET name = excluded.name').run(String(jid), String(name || ''))
   }
 
   setGroupField(jid, field, value) {
@@ -209,6 +209,10 @@ class DB {
 
   saveAuthKey(id, value) {
     this.sqlite.prepare('INSERT INTO auth (id, value) VALUES (?, ?) ON CONFLICT (id) DO UPDATE SET value = excluded.value').run(String(id), String(value))
+  }
+
+  deleteAuthKey(id) {
+    return this.sqlite.prepare('DELETE FROM auth WHERE id = ?').run(String(id)).changes
   }
 
   clearAuth() {
