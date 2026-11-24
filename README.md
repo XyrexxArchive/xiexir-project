@@ -29,12 +29,14 @@ npm start
 
 ## Pairing
 
-1. Jalankan `npm start`
-2. Masukkan nomor WA bot format internasional (contoh `6281234567890`, bukan `08xxx`)
-3. Muncul pairing code di console
+1. Isi `phoneNumber` di `settings.js` dengan nomor WA bot (contoh `6281234567890`, bukan `08xxx`). Kalau dikosongkan, bot minta nomor lewat terminal.
+2. Jalankan `npm start`
+3. Pairing code muncul di console **setelah koneksi ke server WhatsApp benar-benar siap** (event `qr`), jadi gak akan error `Connection Closed` lagi. Kalau request pairing gagal, otomatis retry 3x per request (maks 8 request per proses).
 4. Buka WhatsApp > Perangkat Tertaut > Tautkan dengan Nomor Telepon > masukkan kode
 
-Session tersimpan di database (`session/xiexir.db`), jadi restart tanpa pairing ulang. Kalau sesi logout, auth otomatis dibersihkan dan bot minta pairing baru.
+Session tersimpan di database (`session/xiexir.db`), jadi restart tanpa pairing ulang. Kalau sesi logout, auth otomatis dibersihkan dan bot minta pairing baru. Setelah pairing sukses, server WhatsApp minta restart koneksi (515) dan bot reconnect otomatis dalam 1 detik.
+
+Nomor otomatis dikonversi: `08xxx` atau `8xxx` jadi `628xxx`.
 
 ## Konfigurasi
 
@@ -49,6 +51,8 @@ Edit `settings.js`:
 | `mode` | Mode default (`public` / `self`) |
 | `footer` | Footer pesan bot |
 | `packname` / `author` | Watermark sticker |
+| `phoneNumber` | Nomor WA bot buat pairing (format internasional, kosongkan untuk prompt terminal) |
+| `pairingDelay` | Jeda sebelum minta pairing code (ms, default 2500) |
 
 Bisa juga diatur runtime pakai perintah `.setprefix` dan `.setmode` (tersimpan di database).
 
@@ -142,6 +146,7 @@ Plugin juga bisa ditambah langsung dari chat pakai `.addplugin <nama>` + reply k
 
 - **Admin check LID-aware**: WhatsApp sekarang pakai `@lid` identifier. Serializer mencocokkan `key.participant` (LID), `key.participantAlt` (nomor), `participants[].id`, dan `participants[].jid` sekaligus, jadi fitur admin tetap jalan di grup yang pakai LID.
 - **Owner check**: nomor owner dicocokkan dari `senderPhone` (bukan cuma LID), plus `fromMe` dan nomor bot sendiri selalu dianggap owner.
+- **Pairing flow**: kode pairing diminta hanya saat koneksi siap (trigger event `qr` atau `connecting` + jeda 2500ms), dengan guard biar tidak dobel request (error 409 `pairing code is already pending`). Ini pola yang sama dipakai referensi kanshixi.
 - **Plugin database**: kode dieval lewat file temporer di `tmp/`, jadi plugin dari database boleh import package (sharp, dll). Folder `tmp/` otomatis dibersihkan.
 - **antilink & warn**: admin grup dan owner kebal auto-kick.
 - `LOG_LEVEL=info npm start` untuk log baileys yang lebih verbose.
