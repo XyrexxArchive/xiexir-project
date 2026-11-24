@@ -1,0 +1,9 @@
+node_modules
+package-lock.json
+session
+database
+tmp
+logs
+.DS_Store
+*.db
+*.db-journal
