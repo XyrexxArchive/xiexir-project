@@ -1,5 +1,5 @@
 // Xiexir-Bot | Developer: xyrcodex - dapsKikir
-import { initAuthCreds, BufferJSON } from '@rexxhayanasi/elaina-baileys'
+import { initAuthCreds, BufferJSON, proto } from '@rexxhayanasi/elaina-baileys'
 import { db } from './database.js'
 
 export function useSQLiteAuthState() {
@@ -26,7 +26,9 @@ export function useSQLiteAuthState() {
             const value = db.getAuthKey(`${type}:${id}`)
             if (!value) continue
             try {
-              data[id] = JSON.parse(value, BufferJSON.reviver)
+              let parsed = JSON.parse(value, BufferJSON.reviver)
+              if (type === 'app-state-sync-key' && parsed) parsed = proto.Message.AppStateSyncKeyData.fromObject(parsed)
+              data[id] = parsed
             } catch {}
           }
           return data
@@ -34,7 +36,12 @@ export function useSQLiteAuthState() {
         set: async (data) => {
           for (const category of Object.keys(data)) {
             for (const id of Object.keys(data[category])) {
-              db.saveAuthKey(`${category}:${id}`, JSON.stringify(data[category][id], BufferJSON.replacer))
+              const value = data[category][id]
+              if (!value) {
+                db.deleteAuthKey(`${category}:${id}`)
+                continue
+              }
+              db.saveAuthKey(`${category}:${id}`, JSON.stringify(value, BufferJSON.replacer))
             }
           }
         }

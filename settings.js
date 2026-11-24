@@ -1,4 +1,4 @@
-// Xiexir-Bot | Developer: xyrcodex - dapsKikir
+// Xiexir-Bot - Konfigurasi Bot | xyrcodex - dapsKikir
 export default {
   botName: 'Xiexir-Bot',
   ownerName: 'Xiexir',
@@ -9,5 +9,7 @@ export default {
   packname: 'Xiexir-Bot',
   author: 'xyrcodex - dapsKikir',
   repoUrl: 'https://github.com/XyrexxArchive/xiexir-project',
-  timezone: 'Asia/Jakarta'
+  timezone: 'Asia/Jakarta',
+  phoneNumber: '',
+  pairingDelay: 2500
 }
