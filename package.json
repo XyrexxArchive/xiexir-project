@@ -1,0 +1,20 @@
+{
+  "name": "xiexir-bot",
+  "version": "1.0.0",
+  "description": "WhatsApp Bot ESM Plugin Based - Powered By Xiexir-Bot",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "xyrcodex - dapsKikir",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@rexxhayanasi/elaina-baileys": "^1.4.7",
+    "better-sqlite3": "^13.2.0",
+    "pino": "^9.5.0"
+  }
+}
